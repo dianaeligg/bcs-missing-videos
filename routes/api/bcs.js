@@ -13,8 +13,11 @@ router.route("/login")
 router.route("/getSession")
   .post(bcsController.getSession);
 
-router.route("/getSessions")
+router.route("/getSessions/")
   .post(bcsController.getSessions);
+
+router.route("/getSessions/:enrollmentID")
+  .get(bcsController.getSessionsGet);
 
 // router.route("/login")
 //   .post(bcsController.login, () => console.log("done"));

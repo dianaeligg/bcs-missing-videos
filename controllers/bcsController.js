@@ -65,7 +65,6 @@ const getSessionDetail = async (authToken,sessionId) => {
     'Content-Type': 'application/json'
   };
   let promise = new Promise(resolve=>{
-  console.log("sessionId " + sessionId);
     axios.post("https://bootcampspot.com/api/instructor/v1/sessionDetail", {sessionID: sessionId},{headers: headers})
       .then(function(sessionData){
           resolve(sessionData.data.session);
@@ -113,7 +112,7 @@ module.exports = {
     res.send("getLogin");
   },
   login: function(req, res) {
-    console.log("posting /loginOnly");
+    console.log("POST /loginOnly");
     console.log(req.body);
     axios.post("https://bootcampspot.com/api/instructor/v1/login", req.body).then( data => {
         console.log(data.data);
@@ -123,7 +122,7 @@ module.exports = {
     });
   },
   getSession: (req, res) => {
-    console.log("posting /getSession");
+    console.log("POST /getSession");
     console.log(req.body.sessionID);
     getSessionInternal(req.headers.authtoken, req.body.sessionID).then( result => {
       console.log("result2 " + result[0]);
@@ -131,8 +130,15 @@ module.exports = {
     });
   },
   getSessions: (req, res) => {
-    console.log("posting /getSessions");
+    console.log("POST /getSessions");
+    // res.json(req.body.enrollmentID);
     getSessionsByEnrollment(req.headers.authtoken, req.body.enrollmentID).then( sessionIds => {
+      getSessions(req.headers.authtoken,sessionIds).then(sessions => res.json(sessions) );
+    });
+  },
+  getSessionsGet: (req,res) => {
+    console.log("GET /getSessions");
+    getSessionsByEnrollment(req.headers.authtoken, Number(req.params.enrollmentID)).then( sessionIds => {
       getSessions(req.headers.authtoken,sessionIds).then(sessions => res.json(sessions) );
     });
   },
