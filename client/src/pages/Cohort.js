@@ -26,15 +26,15 @@ class App extends Component {
     render() {
         return (
             <div>
-            { (this.state.loading) ? <img src={require('../resources/loading.gif')}></img> : "" } 
-            <ul>
-                {
-                    this.state.sessions.filter(x => x.session.id !== -1).map(item => 
-                        <li key={item.session.id}>  {item.session.name} - {item.videoUrlList.length}</li>
-                    )
-                }
-            </ul>
-        </div>
+                { (this.state.loading) ? <img src={require('../resources/loading.gif')}></img> : "" } 
+                <ul>
+                    {
+                        this.state.sessions.filter(x => x.session.id !== -1).map(item => 
+                            <li key={item.session.id}>  {item.session.name} - {item.videoUrlList.length}</li>
+                        )
+                    }
+                </ul>
+            </div>
         );
     }
 }

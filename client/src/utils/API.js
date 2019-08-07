@@ -1,14 +1,18 @@
 import axios from "axios";
-require('dotenv').config()
+const getAuthToken = () => localStorage.getItem("BCS_TOKEN");
 
 export default {
-  getLanding: function(q) {
+  getLanding: () => {
     return axios.get("/api/bcs/");
   },
-  getSessions: function(enrollmentId) {
+  login: (email,password) => {
+    let loginInfo = { email: email, password: password};
+    return axios.post("api/bcs/login",loginInfo);
+  },
+  getSessions: enrollmentId => {
     return axios.get("/api/bcs/getSessions/" + enrollmentId, 
     {
-      headers: {authToken: TEMP_AUTH_KEY}
+      headers: {authToken: getAuthToken()}
     }
     );
   }
