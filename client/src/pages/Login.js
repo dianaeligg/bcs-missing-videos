@@ -35,6 +35,7 @@ class App extends Component {
             if (response.data.success){
                 localStorage.setItem("BCS_TOKEN", response.data.authenticationInfo.authToken);
                 localStorage.setItem("BCS_USER_ID", response.data.authenticationInfo.userId);
+                this.props.history.push("/cohort")
             }else{
                 this.setState({badInfo: true});
             }

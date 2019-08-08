@@ -4,6 +4,7 @@ import "./App.css";
 import Main from "./pages/Main"
 import Cohort from "./pages/Cohort"
 import Login from "./pages/Login"
+import CohortList from "./pages/CohortList"
 
 class App extends Component {
   render() {
@@ -14,6 +15,7 @@ class App extends Component {
           <Route exact path="/login" component={Login} />
           <Route exact path="/cohort" component={Cohort} />
           <Route exact path="/cohort/:id" component={Cohort} />
+          <Route exact path="/cohortList" component={CohortList} />
       </div>
     </Router>
     );

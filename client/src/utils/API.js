@@ -13,7 +13,11 @@ export default {
     return axios.get("/api/bcs/getSessions/" + enrollmentId, 
     {
       headers: {authToken: getAuthToken()}
-    }
-    );
+    });
+  },
+  getEnrollments: () => {
+    return axios.get("/api/bcs/getEnrollments/",{
+      headers: {authToken: getAuthToken()}
+    }) ;
   }
 };

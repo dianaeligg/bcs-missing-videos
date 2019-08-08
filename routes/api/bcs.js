@@ -19,6 +19,9 @@ router.route("/getSessions/")
 router.route("/getSessions/:enrollmentID")
   .get(bcsController.getSessionsGet);
 
+router.route("/getEnrollments/")
+  .get(bcsController.getEnrollments);
+
 // router.route("/login")
 //   .post(bcsController.login, () => console.log("done"));
 

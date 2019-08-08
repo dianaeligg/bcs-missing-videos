@@ -85,25 +85,45 @@ const getSessions = async (authToken, sessionIds) => {
 }
 
 const getSessionsByEnrollment = async (authToken, enrollmentID) => {
-let headers = {
-  'authToken': authToken,
-  'Content-Type': 'application/json'
-};
-let promise = new Promise((resolve, reject) => {
-  axios.post("https://bootcampspot.com/api/instructor/v1/sessions", {enrollmentID: enrollmentID},{headers: headers})
-      .then(function(courseData){
-        console.log(courseData.data.calendarSessions[0]);
-        let sessionIds = courseData.data.calendarSessions
-                      .filter(x => x.category.code === "academic")
-                      .map(x => x.session.id);
-        resolve(sessionIds);
-    }).catch(function(err){
-      console.log("something went wrong in axios.post /sessions");
-      console.log(err);
+  let headers = {
+    'authToken': authToken,
+    'Content-Type': 'application/json'
+  };
+  let promise = new Promise((resolve, reject) => {
+    axios.post("https://bootcampspot.com/api/instructor/v1/sessions", {enrollmentID: enrollmentID},{headers: headers})
+        .then(function(courseData){
+          console.log(courseData.data.calendarSessions[0]);
+          let sessionIds = courseData.data.calendarSessions
+                        .filter(x => x.category.code === "academic")
+                        .map(x => x.session.id);
+          resolve(sessionIds);
+      }).catch(function(err){
+        console.log("something went wrong in axios.post /sessions");
+        console.log(err);
+        resolve("error");
+      });
+  });
+  return await promise;
+}
+
+const getEnrollmentsInternal = async(authToken) => {
+  let headers = {
+    'authToken': authToken,
+    'Content-Type': 'application/json'
+  }
+  console.log("authToken",authToken);
+  let promise = new Promise ((resolve, reject) => {
+  axios.get("https://bootcampspot.com/api/instructor/v1/me", {headers: headers})
+    .then(enrollmentData => {
+      // console.log("then de getEnrollments", enrollmentData[0]);
+      resolve(enrollmentData);
+    })
+    .catch( err => {
+      console.log("something went wrong in axios.get /me ")
       resolve("error");
     });
-});
-return await promise;
+  });
+  return await promise;
 }
 
 
@@ -142,11 +162,14 @@ module.exports = {
       getSessions(req.headers.authtoken,sessionIds).then(sessions => res.json(sessions) );
     });
   },
-  update: function(req, res) {
-    db.Book
-      .findOneAndUpdate({ _id: req.params.id }, req.body)
-      .then(dbModel => res.json(dbModel))
-      .catch(err => res.status(422).json(err));
+  getEnrollments: function(req, res) {
+    console.log("GET /getEnrollments");
+    getEnrollmentsInternal(req.headers.authtoken).then(response => {
+      console.log("enrollment", response.data);
+      res.json(response.data);
+    }).catch(err => {
+      res.json(err);
+    });
   },
   remove: function(req, res) {
     db.Book
