@@ -19,7 +19,7 @@ function SessionCard({ name, date, videos }) {
           <Card.Header>{name}</Card.Header>
           <Card.Meta>{date.toDateString()}</Card.Meta>
           <Card.Description>
-            {videos.map((vid, i) => <a href={vid.url} target="_blank"> Video {i+1} </a>)}
+            {videos.map((vid, i) => <a key={i} href={vid.url} target="_blank"> Video {i+1} </a>)}
           </Card.Description>
         </Card.Content>
       </Card>

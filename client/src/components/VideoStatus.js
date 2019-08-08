@@ -4,12 +4,12 @@ import { Card } from 'semantic-ui-react'
 
 const success = {
   border: '5px solid green',
-  "margin-bottom": "10px"
+  marginBottom: "10px"
 };
 
 const failure = {
   border: '5px solid red',
-  "margin-bottom": "10px"
+  marginBottom: "10px"
 };
 
 function VideoStatus({ withVideos }) {

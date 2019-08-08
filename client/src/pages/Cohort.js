@@ -43,6 +43,7 @@ class App extends Component {
                 <Card.Group itemsPerRow={3}>
                 {this.state.sessions.filter(x => x.session.id !== -1).map(item => 
                     <SessionCard name={item.session.name}
+                                 key={item.session.id}
                                  date={new Date(item.session.startTime)}
                                  videos={item.videoUrlList}></SessionCard>
                 )} 
