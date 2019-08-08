@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import API from "../utils/API"
+import SessionCard from "../components/SessionCard";
 
 class App extends Component {
 
@@ -12,9 +13,9 @@ class App extends Component {
     }
 
     componentDidMount(){
-        const { enrollmentId } = this.props.match.params.id;
-      
-        API.getSessions(168532).then(r => {
+        const enrollmentId  = this.props.match.params.id;
+        console.log(enrollmentId);
+        API.getSessions(enrollmentId).then(r => {
             console.log(r.data[0]);
             this.setState({
                 sessions: r.data,
@@ -37,11 +38,16 @@ class App extends Component {
         return (
             <div>
                 { (this.state.loading) ? <img src={require('../resources/loading.gif')}></img> : "" } 
-                { (this.state.loggedIn) ? "" : "Not logged in" } 
+                { (this.state.loggedIn) ? "" : "Not logged in" }
+                {this.state.sessions.filter(x => x.session.id !== -1).map(item => 
+                    <SessionCard name={item.session.name}></SessionCard>
+                )} 
+                
                 <ul>
                     {
                         this.state.sessions.filter(x => x.session.id !== -1).map(item => 
                             <li key={item.session.id}>  {item.session.name} - {item.videoUrlList.length}</li>
+                            
                         )
                     }
                 </ul>

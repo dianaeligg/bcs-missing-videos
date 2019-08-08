@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import API from "../utils/API";
 
 class App extends Component {
@@ -28,7 +29,7 @@ class App extends Component {
                 <ul>
                     {
                         this.state.enrollments.filter(x => x.id !== -1).map(item => 
-                            <li key={item.id}> <a href={`/cohort/${item.id}`}>  {item.course.name} </a></li>
+                            <li key={item.id}> <Link to={`/cohort/${item.id}`}>  {item.course.name} </Link></li>
                         )
                     }
                 </ul>
