@@ -5,14 +5,6 @@ import VideoStatus from './VideoStatus'
 
 function SessionCard({ name, date, videos }) {
   return (
-    <div>
-      {/* <Card
-        link
-        header={name}
-        key={name}
-        meta={date.toDateString()}
-        description={videos.map((vid, i) => <a href={vid.url} target="_blank"> Video {i+1} </a>)}
-      /> */}
       <Card>
         <Card.Content>
           <VideoStatus withVideos={videos.length > 0}></VideoStatus>
@@ -23,7 +15,6 @@ function SessionCard({ name, date, videos }) {
           </Card.Description>
         </Card.Content>
       </Card>
-    </div>
   );
 }
 
