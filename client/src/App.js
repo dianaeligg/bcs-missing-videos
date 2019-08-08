@@ -5,6 +5,7 @@ import Main from "./pages/Main"
 import Cohort from "./pages/Cohort"
 import Login from "./pages/Login"
 import CohortList from "./pages/CohortList"
+import { Button } from 'semantic-ui-react'
 
 class App extends Component {
   render() {
