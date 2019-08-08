@@ -5,12 +5,16 @@ import Main from "./pages/Main"
 import Cohort from "./pages/Cohort"
 import Login from "./pages/Login"
 import CohortList from "./pages/CohortList"
-import { Button } from 'semantic-ui-react'
+import {
+  Container
+} from 'semantic-ui-react'
 
 class App extends Component {
+
   render() {
     return (
       <Router>
+      <Container>
       <div>
           <Route exact path="/" component={Main} />
           <Route exact path="/login" component={Login} />
@@ -18,6 +22,7 @@ class App extends Component {
           <Route exact path="/cohort/:id" component={Cohort} />
           <Route exact path="/cohortList" component={CohortList} />
       </div>
+      </Container>
     </Router>
     );
   }

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import API from "../utils/API"
 import SessionCard from "../components/SessionCard";
+import { Card } from 'semantic-ui-react'
 
 class App extends Component {
 
@@ -39,18 +40,13 @@ class App extends Component {
             <div>
                 { (this.state.loading) ? <img src={require('../resources/loading.gif')}></img> : "" } 
                 { (this.state.loggedIn) ? "" : "Not logged in" }
+                <Card.Group itemsPerRow={3}>
                 {this.state.sessions.filter(x => x.session.id !== -1).map(item => 
-                    <SessionCard name={item.session.name}></SessionCard>
+                    <SessionCard name={item.session.name}
+                                 date={new Date(item.session.startTime)}
+                                 videos={item.videoUrlList}></SessionCard>
                 )} 
-                
-                <ul>
-                    {
-                        this.state.sessions.filter(x => x.session.id !== -1).map(item => 
-                            <li key={item.session.id}>  {item.session.name} - {item.videoUrlList.length}</li>
-                            
-                        )
-                    }
-                </ul>
+                </Card.Group>
             </div>
         );
     }
