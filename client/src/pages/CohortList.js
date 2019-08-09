@@ -1,6 +1,11 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import API from "../utils/API";
+import { Card } from 'semantic-ui-react';
+import CohortCard from "../components/CohortCard"
+
+const cohortGroup ={
+    marginTop: "1em"
+}
 
 class App extends Component {
 
@@ -24,16 +29,19 @@ class App extends Component {
     render() {
         return (
         <div>
-            <div>
-                {(this.state.userAccount.firstName) ? "Hi " + this.state.userAccount.firstName : ""}
-                <ul>
-                    {
-                        this.state.enrollments.filter(x => x.id !== -1).map(item => 
-                            <li key={item.id}> <Link to={`/cohort/${item.id}`}>  {item.course.name} </Link></li>
-                        )
-                    }
-                </ul>
-            </div>
+            <span>{(this.state.userAccount.firstName) ? "Hi " + this.state.userAccount.firstName : ""}</span>
+            <Card.Group itemsPerRow={3} style={cohortGroup}>
+            {
+                this.state.enrollments.filter(x => x.id !== -1).map(item => 
+                    <CohortCard name={item.course.name}
+                                key={item.id}
+                                id={item.id}
+                                role={item.courseRole.name}
+                                startDate={new Date(item.course.startDate)}
+                                endDate={new Date(item.course.endDate)}/> 
+                )
+            }
+            </Card.Group>
         </div>
         );
     }

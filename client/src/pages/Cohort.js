@@ -38,7 +38,7 @@ class App extends Component {
     render() {
         return (
             <div>
-                { (this.state.loading) ? <img src={require('../resources/loading.gif')}></img> : "" } 
+                { (this.state.loading) ? <img alt='loading' src={require('../resources/loading.gif')}></img> : "" } 
                 { (this.state.loggedIn) ? "" : "Not logged in" }
                 <Card.Group itemsPerRow={3}>
                 {this.state.sessions.filter(x => x.session.id !== -1).map(item => 

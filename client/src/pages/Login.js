@@ -1,27 +1,21 @@
-import React, { Component } from "react";
-import API from "../utils/API";
+import React, { Component } from 'react';
+import API from '../utils/API';
+import { Button, Form, Message } from 'semantic-ui-react'
+import FormFieldInput from '../components/FormFieldInput'
 
-class App extends Component {
+class Login extends Component {
 
     state = {
-        msg: "LOGIN",
+        msg: 'LOGIN',
         badInfo: false
     }
 
     componentDidMount(){
-        // API.getLanding().then(r => {
-        //     console.log(r);
-        //     this.setState({
-        //         msg: r.data.msg
-        //     });
-        // });
     }
 
     handleInputChange = event => {
-        let value = event.target.value;
-        const name = event.target.name;
-        // console.log(value, name);
         this.setState({
+          badInfo: false,
           [event.target.name]: event.target.value
         });
       };
@@ -33,9 +27,9 @@ class App extends Component {
         API.login(this.state.email, this.state.password).then(response => {
             console.log(response);
             if (response.data.success){
-                localStorage.setItem("BCS_TOKEN", response.data.authenticationInfo.authToken);
-                localStorage.setItem("BCS_USER_ID", response.data.authenticationInfo.userId);
-                this.props.history.push("/cohortList")
+                localStorage.setItem('BCS_TOKEN', response.data.authenticationInfo.authToken);
+                // localStorage.setItem('BCS_USER_ID', response.data.authenticationInfo.userId);
+                this.props.history.push('/cohortList')
             }else{
                 this.setState({badInfo: true});
             }
@@ -46,26 +40,32 @@ class App extends Component {
     render() {
         return (
         <div>
-            {/* <form> */}
-                <label>Username</label>
-                <input  value={this.state.email}
-                        name="email"
-                        onChange={this.handleInputChange}
-                        type="text"
-                        placeholder="E-mail"></input>
-                <label>Password</label>
-                <input  value={this.state.password}
-                        name="password"
-                        onChange={this.handleInputChange}
-                        type="password"
-                        placeholder="Password"></input>
-                <button onClick={this.handleFormSubmit}>Sign In</button>
-                {(this.state.badInfo) ? <label>Login Information was incorrect</label> : ""}
-                
-            {/* </form> */}
+              
+              <Form warning={this.state.badInfo}>
+                <FormFieldInput text='E-mail'
+                                name='email'
+                                placeholder='me@domain.com'
+                                type='text'
+                                handleChange={this.handleInputChange}
+                                ></FormFieldInput>
+                <FormFieldInput text='Password'
+                                name='password'
+                                placeholder='Password'
+                                type='password'
+                                handleChange={this.handleInputChange}
+                                ></FormFieldInput>
+                <Button type='submit' onClick={this.handleFormSubmit}>Sign In</Button>
+                <Message
+                warning
+                header='Hey you, yeah you!'
+                list={[
+                    'The username and password combination does not match any user in the BCS user list',
+                ]}
+                />
+            </Form>
         </div>
         );
     }
 }
 
-export default App;
+export default Login;

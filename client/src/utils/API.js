@@ -1,5 +1,8 @@
 import axios from "axios";
-const getAuthToken = () => localStorage.getItem("BCS_TOKEN");
+import { BCS_TOKEN } from "../localKeys";
+
+
+const getAuthToken = () => localStorage.getItem(BCS_TOKEN);
 
 export default {
   getLanding: () => {
