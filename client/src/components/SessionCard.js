@@ -6,7 +6,7 @@ function SessionCard({ name, date, videos }) {
   return (
       <Card>
         <Card.Content>
-          <VideoStatus withVideos={videos.length > 0}></VideoStatus>
+          <VideoStatus withVideos={videos.length > 0} passedDate={date < new Date()}></VideoStatus>
           <Card.Header>{name}</Card.Header>
           <Card.Meta>{date.toDateString()}</Card.Meta>
           <Card.Description>

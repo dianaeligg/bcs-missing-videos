@@ -15,31 +15,34 @@ class App extends Component {
 
     componentDidMount(){
         const enrollmentId  = this.props.match.params.id;
-        console.log(enrollmentId);
         API.getSessions(enrollmentId).then(r => {
-            console.log(r.data[0]);
             this.setState({
                 sessions: r.data,
                 loading: false,
                 loggedIn: true
-            }, () => console.log(this.state.sessions));
+            }, () => {console.log(this.state)});
         }).catch(err => {
-            console.log(err);
             this.setState({
                 loggedIn: false
             });
         });
     }
 
-    onClearArray = () => {
-        this.setState({ sessions: [{session:{id:99}}] }, console.log(this.state.sessions));
-    };
-
     render() {
         return (
             <div>
                 { (this.state.loading) ? <img alt='loading' src={require('../resources/loading.gif')}></img> : "" } 
                 { (this.state.loggedIn) ? "" : "Not logged in" }
+                { this.state.sessions.filter(x => x.session.id !== -1).length > 0 ?
+                    <div> 
+                        <span></span>
+                        <div style={{margin: '10px 0'}}>
+                            <div style={{borderLeft: '16px green solid', paddingLeft: '0.5em', display: 'inline'}}> Sessions with Video</div>
+                            <div style={{borderLeft: '16px red solid', paddingLeft: '0.5em', marginLeft: '1.5em', display: 'inline'}}> Sessions without Video</div>
+                            <div style={{borderLeft: '16px orange solid', paddingLeft: '0.5em', marginLeft: '1.5em',display: 'inline'}}> Sessions yet to come</div>
+                        </div>
+                    </div> : ""
+                }
                 <Card.Group itemsPerRow={3}>
                 {this.state.sessions.filter(x => x.session.id !== -1).map(item => 
                     <SessionCard name={item.session.name}

@@ -92,7 +92,7 @@ const getSessionsByEnrollment = async (authToken, enrollmentID) => {
   let promise = new Promise((resolve, reject) => {
     axios.post("https://bootcampspot.com/api/instructor/v1/sessions", {enrollmentID: enrollmentID},{headers: headers})
         .then(function(courseData){
-          console.log(courseData.data.calendarSessions[0]);
+          console.log("courseData", courseData.data.calendarSessions[0]);
           let sessionIds = courseData.data.calendarSessions
                         .filter(x => x.category.code === "academic")
                         .map(x => x.session.id);
@@ -158,8 +158,10 @@ module.exports = {
   },
   getSessionsGet: (req,res) => {
     console.log("GET /getSessions");
-    getSessionsByEnrollment(req.headers.authtoken, Number(req.params.enrollmentID)).then( sessionIds => {
-      getSessions(req.headers.authtoken,sessionIds).then(sessions => res.json(sessions) );
+    getSessionsByEnrollment(req.headers.authtoken, Number(req.params.enrollmentID)).then( response => {
+      getSessions(req.headers.authtoken,response).then(sessions => {
+        res.json(sessions) ;
+      } );
     });
   },
   getEnrollments: function(req, res) {

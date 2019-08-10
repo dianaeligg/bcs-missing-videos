@@ -10,9 +10,14 @@ const failure = {
   marginBottom: "10px"
 };
 
-function VideoStatus({ withVideos }) {
+const pending = {
+  border: '5px solid orange',
+  marginBottom: "10px"
+}
+
+function VideoStatus( props ) {
   return (
-    <div style={withVideos? success: failure}>
+    <div style={props.withVideos ? success: props.passedDate ? failure : pending}>
       
     </div>
   );

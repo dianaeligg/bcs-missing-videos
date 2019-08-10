@@ -8,6 +8,7 @@ import {
   Container, Menu
 } from 'semantic-ui-react'
 import {BCS_TOKEN} from "./localKeys"
+import Emoji from "./components/Emoji"
 
 class App extends Component {
   state = {
@@ -27,17 +28,16 @@ class App extends Component {
       <Router>
         <Menu fixed='top' inverted>
         <Menu.Item color='green'>
-          BCS-MISSING-VIDEOS
+        <Emoji label="sheep" symbol="🐸"/> BCS-MISSING-VIDEOS
         </Menu.Item>
 
         <Route
                 path="/cohort"
                 render={ props => (
-                    <Menu.Item
+                    <Menu.Item as={Link} to='/cohortList'
                       name='CohortList'
-                      
                     >
-                      <Link to='/cohortList'> Cohort List</Link>
+                      Cohort List
                     </Menu.Item>
                 )}
               />
@@ -45,9 +45,9 @@ class App extends Component {
         <Menu.Menu position='right'>
           <Menu.Item
             name='LogOut'
+            as={Link} to="/login"
             onClick={this.logOut}
           >
-            
             Log Out
           </Menu.Item>
         </Menu.Menu>

@@ -1,28 +1,30 @@
 import React, { Component } from "react";
 import API from "../utils/API";
-import { Card } from 'semantic-ui-react';
-import CohortCard from "../components/CohortCard"
-
-const cohortGroup ={
-    marginTop: "1em"
-}
+import CohortGroup from "../components/CohortGroup"
 
 class App extends Component {
 
     state = {
         msg: "LIST",
         badInfo: false,
-        userAccount: {},
-        enrollments: []
+        userAccount: {firstName: ""},
+        enrollments: [],
     }
 
     componentDidMount(){
+        console.log(this.state.userAccount)
         API.getEnrollments().then(r => {
-            console.log(r);
-            this.setState({
-                userAccount: r.data.userAccount,
-                enrollments: r.data.enrollments
-            }, x => console.log(this.state.enrollments))
+            if (r.data !== "")
+                this.setState({
+                    userAccount: r.data.userAccount,
+                    enrollments: r.data.enrollments
+                }, x => {})
+            else{
+                console.log("not logged in?")
+                this.props.history.push('/login');
+            }
+        }).catch(err =>{
+            console.log("error")
         });
     }
 
@@ -30,18 +32,22 @@ class App extends Component {
         return (
         <div>
             <span>{(this.state.userAccount.firstName) ? "Hi " + this.state.userAccount.firstName : ""}</span>
-            <Card.Group itemsPerRow={3} style={cohortGroup}>
-            {
-                this.state.enrollments.filter(x => x.id !== -1).map(item => 
-                    <CohortCard name={item.course.name}
-                                key={item.id}
-                                id={item.id}
-                                role={item.courseRole.name}
-                                startDate={new Date(item.course.startDate)}
-                                endDate={new Date(item.course.endDate)}/> 
-                )
-            }
-            </Card.Group>
+            <CohortGroup text="Current Enrollments" color="purple" 
+                                group={this.state.enrollments.filter(
+                                        x => new Date(x.course.startDate) < new Date() && 
+                                            new Date (x.course.endDate) > new Date())
+                                        }
+                                />
+            <CohortGroup text="Past Enrollments" color="blue" 
+                                group={this.state.enrollments.filter(
+                                        x => new Date(x.course.endDate) < new Date())
+                                        }
+                                />
+            <CohortGroup text="Future Enrollments" color="teal" 
+                                group={this.state.enrollments.filter(
+                                        x => new Date(x.course.startDate) > new Date())
+                                        }
+                                />
         </div>
         );
     }
