@@ -2,11 +2,17 @@ import React, { Component } from "react";
 import API from "../utils/API";
 import CohortGroup from "../components/CohortGroup"
 
+const loadingStyle = {
+    margin: "auto",
+    display: "flex"
+}
+
 class App extends Component {
 
     state = {
         msg: "LIST",
         badInfo: false,
+        loading: true,
         userAccount: {firstName: ""},
         enrollments: [],
     }
@@ -17,7 +23,8 @@ class App extends Component {
             if (r.data !== "")
                 this.setState({
                     userAccount: r.data.userAccount,
-                    enrollments: r.data.enrollments
+                    enrollments: r.data.enrollments,
+                    loading: false
                 }, x => {})
             else{
                 console.log("not logged in?")
@@ -31,6 +38,10 @@ class App extends Component {
     render() {
         return (
         <div>
+            { (this.state.loading) ? 
+                    <img alt='loading' src={require('../resources/loading.gif')}
+                        style={loadingStyle}/>
+                    : "" }
             <span>{(this.state.userAccount.firstName) ? "Hi " + this.state.userAccount.firstName : ""}</span>
             <CohortGroup text="Current Enrollments" color="purple" 
                                 group={this.state.enrollments.filter(

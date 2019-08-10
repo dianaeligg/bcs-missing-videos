@@ -3,6 +3,11 @@ import API from "../utils/API"
 import SessionCard from "../components/SessionCard";
 import { Card } from 'semantic-ui-react'
 
+const loadingStyle = {
+    margin: "auto",
+    display: "flex"
+}
+
 class App extends Component {
 
     state = {
@@ -31,7 +36,10 @@ class App extends Component {
     render() {
         return (
             <div>
-                { (this.state.loading) ? <img alt='loading' src={require('../resources/loading.gif')}></img> : "" } 
+                { (this.state.loading) ? 
+                    <img alt='loading' src={require('../resources/loading.gif')}
+                        style={loadingStyle}/>
+                    : "" } 
                 { (this.state.loggedIn) ? "" : "Not logged in" }
                 { this.state.sessions.filter(x => x.session.id !== -1).length > 0 ?
                     <div> 

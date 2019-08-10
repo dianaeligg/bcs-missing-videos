@@ -9,6 +9,7 @@ import {
 } from 'semantic-ui-react'
 import {BCS_TOKEN} from "./localKeys"
 import Emoji from "./components/Emoji"
+import Footer from "./components/Footer";
 
 class App extends Component {
   state = {
@@ -61,6 +62,7 @@ class App extends Component {
           <Route exact path="/cohortList" component={CohortList} />
       </div>
       </Container>
+      <Footer/>
     </Router>
     );
   }
