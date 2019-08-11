@@ -1,31 +1,10 @@
-# Create React Express App
+# BCS MISSING VIDEOS
 
-## About This Boilerplate
+## What?
 
-This setup allows for a Node/Express/React app which can be easily deployed to Heroku.
+A web application that connects to BCS API to get a list of Cohorts and their sessions to quickly find missing videos on each of them. 
 
-The front-end React app will auto-reload as it's updated via webpack dev server, and the backend Express app will auto-reload independently with nodemon.
+## But why?
 
-## Starting the app locally
+What started as a way to not individually click each of the 72 sessions ended up as an application that can help other not do the same.
 
-Start by installing front and backend dependencies. While in this directory, run the following command:
-
-```
-npm install
-```
-
-This should install node modules within the server and the client folder.
-
-After both installations complete, run the following command in your terminal:
-
-```
-npm start
-```
-
-Your app should now be running on <http://localhost:3000>. The Express server should intercept any AJAX requests from the client.
-
-## Deployment (Heroku)
-
-To deploy, simply add and commit your changes, and push to Heroku. As is, the NPM scripts should take care of the rest.
-
-lalalala

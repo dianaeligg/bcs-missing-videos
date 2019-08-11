@@ -16,10 +16,10 @@ const Footer = () => {
     abcd = abcd + ".com";
     return(
         <div style={footerStyle}>
-        <div>Found a bug? Have a suggestion on how this app can be improved?</div>
-        <div>Send an e-mail to: 
-            <a href={`mailto: ${abcd}`}> {abcd}</a>
-        </div>
+            <div>Found a bug? Have a suggestion on how this app can be improved?</div>
+            <div>Send an e-mail to: 
+                <a href={`mailto:${abcd}?subject=Comment about BCS Missing Videos`} target="_blank" rel="noopener noreferrer"> {abcd}</a>
+            </div>
         </div>
     )
 }
