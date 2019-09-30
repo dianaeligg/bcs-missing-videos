@@ -20,18 +20,15 @@ const getSessionDetail = async (authToken,sessionId) => {
 const getAllSessionsDetail = async (authToken, sessionIds, enrollmentID) => {
   let sessions;
   let courseID = await getCourseIdFromEnrollmentId(authToken, enrollmentID);
-  let attendance = await getAttendanceByEnrollment(authToken, courseID);
+  let attendance = await getAttendanceByCourse(authToken, courseID);
   sessions = await Promise.all( sessionIds.map(x => getSessionDetail(authToken, x)));
   sessions.forEach( s => {
     let sAsst = attendance.data.filter(att => att.sessionName === s.session.name);
     s.attendance = sAsst.filter(att => att.present && !att.remote).length;
     s.remote = sAsst.filter(att => att.remote).length;
+    s.studentCount = sAsst.length;
   });
   return sessions;
-}
-
-const getAttendanceByClass = async(authToken, sessionId) => {
-
 }
 
 const getSessionsByEnrollment = async (authToken, enrollmentID) => {
@@ -72,17 +69,18 @@ const getEnrollmentsInternal = async(authToken) => {
   return await promise;
 }
 
-const getAttendanceByEnrollment = async(authToken, enrollmentID) => {
+const getAttendanceByCourse = async(authToken, courseID) => {
   let headers = {
     'authToken': authToken,
     'Content-Type': 'application/json'
   };
   let promise = new Promise((resolve, reject) => {
-    axios.post("https://bootcampspot.com/api/instructor/v1/attendance", {courseID: enrollmentID},{headers: headers})
+    axios.post("https://bootcampspot.com/api/instructor/v1/attendance", {courseID: courseID},{headers: headers})
         .then(function(attendanceData){
           resolve(attendanceData);
       }).catch(function(err){
-        console.log("something went wrong in axios.post /getAttendanceByEnrollment");
+        console.log(courseID);
+        console.log("something went wrong in axios.post /getAttendanceByCourse");
         resolve("error");
       });
   });
@@ -99,13 +97,34 @@ const getCourseIdFromEnrollmentId = async(authToken, enrollmentID) => {
         .then(function(instructorData){
           resolve(instructorData.data.enrollments.filter(e => e.id === enrollmentID)[0].courseId);
       }).catch(function(err){
-        console.log(err);
+        console.log(enrollmentID);
         console.log("something went wrong in axios.post /getCourseIdFromEnrollmentId");
         resolve("error");
       });
   });
   return await promise;
 }
+
+const formatAttendanceBySession = async(authToken, enrollmentID) => {
+  let courseID = await getCourseIdFromEnrollmentId(authToken, enrollmentID);
+  let attendance = await getAttendanceByCourse(authToken, courseID);
+  let format = [];
+  attendance.data.forEach(s => {
+    let i = format.map(x => x.sessionName).indexOf(s.sessionName);
+    if (i === -1){
+      format.push( {sessionName: s.sessionName, students: []})
+    }
+    else{
+      format[i].students.push( {studentName: s.studentName, 
+        attendance: s.pending ? "pending" :
+                    s.excused ? "excused" : 
+                    s.remote ? "remote": 
+                    s.present ? "present" : "absent"});
+    }
+  })
+  return format;
+}
+
 
 
 module.exports = {
@@ -139,9 +158,9 @@ module.exports = {
     });
   },
   getAttendance: (req,res) => {
-    getAttendanceByEnrollment(req.headers.authtoken, Number(req.params.enrollmentID)).then(response => {
-      if (response.data)
-        res.json(response.data);
+    formatAttendanceBySession(req.headers.authtoken, Number(req.params.enrollmentID)).then(response => {
+      if (response)
+        res.json(response);
       else
         res.json({userAccount:{id:-1}});
     }).catch(err => {

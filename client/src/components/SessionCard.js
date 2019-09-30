@@ -22,7 +22,7 @@ function SessionCard(props) {
           </Card.Description>
           {props.date < new Date() ? 
           <Card.Description style={ props.attendance + props.remote >= props.maxStudents ? green : red}>
-            {props.attendance}({props.remote}) / {props.maxStudents}
+            Attendance: {props.attendance}({props.remote}) / {props.maxStudents}
           </Card.Description> : ''
           }
         </Card.Content>

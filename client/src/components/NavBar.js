@@ -11,7 +11,7 @@ const NavBar = props => {
             </Menu.Item>
 
             <Route
-                    path="/cohort"
+                    path="/(cohort|attendance)"
                     render={ () => (
                         <Menu.Item as={Link} to='/cohortList'
                         name='CohortList'

@@ -22,5 +22,10 @@ export default {
     return axios.get("/api/bcs/getEnrollments/",{
       headers: {authToken: getAuthToken()}
     }) ;
+  },
+  getAttendance: enrollmentId => {
+    return axios.get("/api/bcs/getAttendance/"+enrollmentId,{
+      headers: {authToken: getAuthToken()}
+    });
   }
 };
