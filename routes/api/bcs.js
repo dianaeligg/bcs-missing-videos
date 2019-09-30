@@ -9,16 +9,13 @@ router.route("/")
 router.route("/login")
   .post(bcsController.login);
 
-// router.route("/getSession")
-//   .post(bcsController.getSession);
-
-// router.route("/getSessions/")
-//   .post(bcsController.getSessions);
-
 router.route("/getSessions/:enrollmentID")
   .get(bcsController.getSessionsGet);
 
 router.route("/getEnrollments/")
   .get(bcsController.getEnrollments);
+
+router.route("/getAttendance/:enrollmentID")
+  .get(bcsController.getAttendance);
 
 module.exports = router;

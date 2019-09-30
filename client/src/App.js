@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import "./App.css";
-import Cohort from "./pages/Cohort"
-import Login from "./pages/Login"
-import CohortList from "./pages/CohortList"
+import Cohort from "./pages/Cohort";
+import Login from "./pages/Login";
+import CohortList from "./pages/CohortList";
+import Attendance from './pages/Attendance';
 import {
   Container
 } from 'semantic-ui-react'
@@ -34,6 +35,7 @@ class App extends Component {
           <Route exact path="/cohort" component={Cohort} />
           <Route exact path="/cohort/:id" component={Cohort} />
           <Route exact path="/cohortList" component={CohortList} />
+          <Route exact path="/attendance/:id" component={Attendance} />
       </div>
       </Container>
       <Footer/>
