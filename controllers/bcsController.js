@@ -40,7 +40,7 @@ const getSessionsByEnrollment = async (authToken, enrollmentID) => {
         .then( courseData => {
           let sessions = courseData.data.calendarSessions
                         .filter(x => x.category.code === "academic")
-                        .map(x => { return {sessionId: x.session.id, sessionName: x.session.name}});
+                        .map(x => { return {sessionId: x.session.id, date: x.session.startTime, sessionName: x.session.name}});
           resolve(sessions);
       }).catch(function(err){
         console.log("something went wrong in axios.post /getSessionsByEnrollment");
@@ -105,17 +105,23 @@ const getCourseIdFromEnrollmentId = async(authToken, enrollmentID) => {
 
 const formatAttendanceBySession = async(authToken, enrollmentID) => {
   let attendance = await getAttendanceByEnrollment(authToken, enrollmentID);
+  attendance = attendance.filter((thing, index, self) =>
+  index === self.findIndex((t) => (
+    t.sessionName === thing.sessionName && t.studentName === thing.studentName
+  )));
   let sessions = await getSessionsByEnrollment(authToken, enrollmentID);
   let format = [];
   sessions.forEach(s => {
-    let sAtt = attendance.filter(att => att.sessionName === s.sessionName).map(att => {
-      return {studentName: att.studentName,
-              attendance: att.pending ? "pending" :
-                          att.excused ? "excused" : 
-                          att.remote ? "remote": 
-                          att.present ? "present" : "absent"}
-    });
-    format.push({sessionName: s.sessionName, students: sAtt});
+    if ( !format.map(f => f.sessionName).includes(s.sessionName) ){
+      let sAtt = attendance.filter(att => att.sessionName === s.sessionName).map(att => {
+        return {studentName: att.studentName,
+                attendance: att.pending ? "pending" :
+                            att.excused ? "excused" : 
+                            att.remote ? "remote": 
+                            att.present ? "present" : "absent"}
+      });
+      format.push({sessionName: s.sessionName, date: s.date, students: sAtt});
+    }
   });
   return format;
 }
