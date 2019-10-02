@@ -2,14 +2,6 @@ import React from "react";
 import { Card } from 'semantic-ui-react';
 import VideoStatus from './VideoStatus'
 
-const green = {
-  color: "green"
-}
-
-const red = {
-  color: "red"
-}
-
 function SessionCard(props) {
   return (
       <Card>
@@ -21,8 +13,8 @@ function SessionCard(props) {
             {props.videos.map((vid, i) => <a key={i} href={vid.url} target='_blank' rel='noopener noreferrer'> Video {i+1} </a>)}
           </Card.Description>
           {props.date < new Date() ? 
-          <Card.Description style={ props.attendance + props.remote >= props.maxStudents ? green : red}>
-            Attendance: {props.attendance}({props.remote}) / {props.maxStudents}
+          <Card.Description>
+            Attendance: {props.attendance} Present / {props.remote} Remote
           </Card.Description> : ''
           }
         </Card.Content>

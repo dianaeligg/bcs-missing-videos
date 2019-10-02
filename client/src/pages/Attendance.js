@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import API from "../utils/API"
-import { Card } from 'semantic-ui-react'
+import AttendanceHeatMap from '../components/AttendanceHeatMap'
 // import NotLoggedIn from "../components/NotLoggedIn";
 
 const loadingStyle = {
@@ -20,10 +20,9 @@ class App extends Component {
     componentDidMount(){
         const courseId  = this.props.match.params.id;
         API.getAttendance(courseId).then(r => {
-            console.log(r);
             if (r.data.length > 0)
                 this.setState({
-                    attendance: r.data,
+                    attendance: r.data.filter(x => { return new Date(x.date) < new Date()}),
                     loading: false,
                     loggedIn: true
                 }, () => {});
@@ -44,19 +43,18 @@ class App extends Component {
         return (
             
             <div> 
-                { (this.state.loading) ? 
-                <img alt='loading' src={require('../resources/loading.gif')}
-                    style={loadingStyle}/>
-                : "" } 
                 
-                {this.state.attendance.map(item => 
-                    <div key={item.sessionName}>
-                        <h1>{item.sessionName}</h1>
-                        {item.students.map(st =>
-                            <div style={{paddingLeft: '30px'}} key={st.studentName}>{st.studentName}</div>
-                        )}
-                    </div>
-                )} 
+                { (this.state.loading) ? 
+                    <img alt='loading' src={require('../resources/loading.gif')}
+                        style={loadingStyle}/>
+                :   
+                    <AttendanceHeatMap attendance={
+                                        this.state.attendance
+                                    }>
+                    </AttendanceHeatMap> 
+                } 
+                
+                
             </div>
         );
     }

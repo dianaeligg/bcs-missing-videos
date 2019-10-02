@@ -65,8 +65,7 @@ class App extends Component {
                                  date={new Date(item.session.startTime)}
                                  videos={item.videoUrlList}
                                  attendance={item.attendance}
-                                 remote={item.remote}
-                                 maxStudents={24}></SessionCard>
+                                 remote={item.remote}></SessionCard>
                 )} 
                 </Card.Group>
             </div>
