@@ -19,11 +19,10 @@ const getSessionDetail = async (authToken,sessionId) => {
 
 const getAllSessionsDetail = async (authToken, sessionIds, enrollmentID) => {
   let sessions;
-  let courseID = await getCourseIdFromEnrollmentId(authToken, enrollmentID);
-  let attendance = await getAttendanceByCourse(authToken, courseID);
-  sessions = await Promise.all( sessionIds.map(x => getSessionDetail(authToken, x)));
+  let attendance = await getAttendanceByEnrollment(authToken, enrollmentID);
+  sessions = await Promise.all( sessionIds.map(x => getSessionDetail(authToken, x.sessionId)));
   sessions.forEach( s => {
-    let sAsst = attendance.data.filter(att => att.sessionName === s.session.name);
+    let sAsst = attendance.filter(att => att.sessionName === s.session.name);
     s.attendance = sAsst.filter(att => att.present && !att.remote).length;
     s.remote = sAsst.filter(att => att.remote).length;
     s.studentCount = sAsst.length;
@@ -39,12 +38,12 @@ const getSessionsByEnrollment = async (authToken, enrollmentID) => {
   let promise = new Promise((resolve, reject) => {
     axios.post("https://bootcampspot.com/api/instructor/v1/sessions", {enrollmentID: enrollmentID},{headers: headers})
         .then( courseData => {
-          let sessionIds = courseData.data.calendarSessions
+          let sessions = courseData.data.calendarSessions
                         .filter(x => x.category.code === "academic")
-                        .map(x => x.session.id);
-          resolve(sessionIds);
+                        .map(x => { return {sessionId: x.session.id, sessionName: x.session.name}});
+          resolve(sessions);
       }).catch(function(err){
-        console.log("something went wrong in axios.post /sessions");
+        console.log("something went wrong in axios.post /getSessionsByEnrollment");
         resolve("error");
       });
   });
@@ -69,17 +68,17 @@ const getEnrollmentsInternal = async(authToken) => {
   return await promise;
 }
 
-const getAttendanceByCourse = async(authToken, courseID) => {
+const getAttendanceByEnrollment = async(authToken, enrollmentID) => {
   let headers = {
     'authToken': authToken,
     'Content-Type': 'application/json'
   };
+  let courseID = await getCourseIdFromEnrollmentId(authToken, enrollmentID);
   let promise = new Promise((resolve, reject) => {
     axios.post("https://bootcampspot.com/api/instructor/v1/attendance", {courseID: courseID},{headers: headers})
         .then(function(attendanceData){
-          resolve(attendanceData);
+          resolve(attendanceData.data);
       }).catch(function(err){
-        console.log(courseID);
         console.log("something went wrong in axios.post /getAttendanceByCourse");
         resolve("error");
       });
@@ -97,7 +96,6 @@ const getCourseIdFromEnrollmentId = async(authToken, enrollmentID) => {
         .then(function(instructorData){
           resolve(instructorData.data.enrollments.filter(e => e.id === enrollmentID)[0].courseId);
       }).catch(function(err){
-        console.log(enrollmentID);
         console.log("something went wrong in axios.post /getCourseIdFromEnrollmentId");
         resolve("error");
       });
@@ -106,22 +104,19 @@ const getCourseIdFromEnrollmentId = async(authToken, enrollmentID) => {
 }
 
 const formatAttendanceBySession = async(authToken, enrollmentID) => {
-  let courseID = await getCourseIdFromEnrollmentId(authToken, enrollmentID);
-  let attendance = await getAttendanceByCourse(authToken, courseID);
+  let attendance = await getAttendanceByEnrollment(authToken, enrollmentID);
+  let sessions = await getSessionsByEnrollment(authToken, enrollmentID);
   let format = [];
-  attendance.data.forEach(s => {
-    let i = format.map(x => x.sessionName).indexOf(s.sessionName);
-    if (i === -1){
-      format.push( {sessionName: s.sessionName, students: []})
-    }
-    else{
-      format[i].students.push( {studentName: s.studentName, 
-        attendance: s.pending ? "pending" :
-                    s.excused ? "excused" : 
-                    s.remote ? "remote": 
-                    s.present ? "present" : "absent"});
-    }
-  })
+  sessions.forEach(s => {
+    let sAtt = attendance.filter(att => att.sessionName === s.sessionName).map(att => {
+      return {studentName: att.studentName,
+              attendance: att.pending ? "pending" :
+                          att.excused ? "excused" : 
+                          att.remote ? "remote": 
+                          att.present ? "present" : "absent"}
+    });
+    format.push({sessionName: s.sessionName, students: sAtt});
+  });
   return format;
 }
 

@@ -53,7 +53,7 @@ class App extends Component {
                     <div key={item.sessionName}>
                         <h1>{item.sessionName}</h1>
                         {item.students.map(st =>
-                            <div key={st.studentName}>{st.studentName}</div>
+                            <div style={{paddingLeft: '30px'}} key={st.studentName}>{st.studentName}</div>
                         )}
                     </div>
                 )} 
