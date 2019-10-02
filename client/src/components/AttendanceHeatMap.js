@@ -12,7 +12,7 @@ let colors ={
 
 function AttendanceHeatMap(props) {
     let attendance =  props.attendance;
-    let height = Math.max(600, attendance.length * 25); 
+    let height = Math.max(600, attendance.length * 30); 
     let state = {
         options: {
             chart: {
@@ -27,8 +27,14 @@ function AttendanceHeatMap(props) {
             },
             tooltip:{
                 custom: ({series, seriesIndex, dataPointIndex, w}) => {
-                    return '<div class="arrow_box">' +
-                      '<span>' + w.globals.labels[dataPointIndex]+ '</span>' +
+                    let status = w.globals.series[seriesIndex][dataPointIndex] === 1 ? 'Present' :
+                    w.globals.series[seriesIndex][dataPointIndex] === 0 ? 'Absent' :
+                    w.globals.series[seriesIndex][dataPointIndex] === 2 ? 'Remote' :
+                    w.globals.series[seriesIndex][dataPointIndex] === 3 ? 'Excused' : 'Pending';
+                    return '<div style="padding: 5px;">' +
+                      '<div>' + w.globals.labels[dataPointIndex] + '</div>' +
+                      '<div>' + w.config.series[seriesIndex].name + '</div>' +
+                      '<div>' + status + '</div>' +
                       '</div>'
                   }
             },
@@ -86,18 +92,18 @@ function AttendanceHeatMap(props) {
                 switch(st.attendance){
                     case "present":
                         return 1;
-                        case "absent":
-                            return 0;
-                            case "excused":
+                    case "absent":
+                        return 0;
+                    case "excused":
                         return 3;
-                        case "remote":
-                            return 2;
-                            case "pending":
+                    case "remote":
+                        return 2;
+                    case "pending":
                         return -1;
-                        default:
-                            return -1;
-                        }
-                    });
+                    default:
+                        return -1;
+                }
+                });
             return {name: att.sessionName, data: d};
         })
     };
