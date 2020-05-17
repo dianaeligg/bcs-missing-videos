@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import API from "../utils/API"
 import SessionCard from "../components/SessionCard";
 import { Card } from 'semantic-ui-react'
@@ -19,24 +19,27 @@ function Cohort (props){
     });
 
     const enrollmentId  = props.match.params.id;
-    API.getSessions(enrollmentId).then(r => {
-        if (r.data.length > 0)
+    useEffect(() => {
+        API.getSessions(enrollmentId).then(r => {
+            if (r.data.length > 0)
+                setState({
+                    sessions: r.data,
+                    loading: false,
+                    loggedIn: true
+                }, () => {});
+            else
+                setState({
+                    loading: false,
+                    loggedIn: false
+                })
+        }).catch(err => {
+            console.log(err);
             setState({
-                sessions: r.data,
-                loading: false,
-                loggedIn: true
-            }, () => {});
-        else
-            setState({
-                loading: false,
                 loggedIn: false
-            })
-    }).catch(err => {
-        console.log(err);
-        setState({
-            loggedIn: false
+            });
         });
-    });
+    }, [])
+
     return (
         <div>
             { (state.loading) ? 

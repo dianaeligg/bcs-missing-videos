@@ -33,7 +33,6 @@ class Login extends Component {
     render() {
         return (
         <div>
-              
               <Form warning={this.state.badInfo}>
                 <FormFieldInput text='E-mail'
                                 name='email'

@@ -94,7 +94,7 @@ const getCourseIdFromEnrollmentId = async(authToken, enrollmentID) => {
   let promise = new Promise((resolve, reject) => {
     axios.get("https://bootcampspot.com/api/instructor/v1/me",{headers: headers})
         .then(function(instructorData){
-          resolve(instructorData.data.enrollments.filter(e => e.id === enrollmentID)[0].courseId);
+          resolve(instructorData.data.Enrollments.filter(e => e.id === enrollmentID)[0].courseId);
       }).catch(function(err){
         console.log("something went wrong in axios.post /getCourseIdFromEnrollmentId");
         resolve("error");

@@ -13,17 +13,17 @@ function CohortList() {
     const [state, setState] = useState({
         badInfo: false,
         loading: true,
-        userAccount: {firstName: ""},
+        userInfo: {firstName: ""},
         enrollments: [],
         loggedIn: true
     });
 
     useEffect( () => {
         API.getEnrollments().then(r => {
-            if (r.data.userAccount.id !== -1)
+            if (r.data.userInfo.id !== -1)
                 setState({
-                    userAccount: r.data.userAccount,
-                    enrollments: r.data.enrollments,
+                    userInfo: r.data.userInfo,
+                    enrollments: r.data.Enrollments,
                     loading: false,
                     loggedIn: true
                 })
@@ -44,7 +44,7 @@ function CohortList() {
         { (!state.loggedIn) ? 
                 <NotLoggedIn></NotLoggedIn>
                 : "" }
-        <span>{(state.userAccount.firstName) ? "Hi " + state.userAccount.firstName : ""}</span>
+        <span>{(state.userInfo.firstName) ? "Hi " + state.userInfo.firstName : ""}</span>
         <CohortGroup text="Current Enrollments" color="purple" 
                             group={state.enrollments.filter(
                                     x => new Date(x.course.startDate) < new Date() && 

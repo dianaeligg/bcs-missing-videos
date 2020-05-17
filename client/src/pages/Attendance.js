@@ -37,10 +37,8 @@ function Attendance (props) {
     });
     
     return (
-        
         <div> 
-            
-            { (state.loading) ? 
+            { state.loading ? 
                 <img alt='loading' src={require('../resources/loading.gif')}
                     style={loadingStyle}/>
             :   
@@ -49,8 +47,6 @@ function Attendance (props) {
                                 }>
                 </AttendanceHeatMap> 
             } 
-            
-            
         </div>
     );
 }

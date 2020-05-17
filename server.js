@@ -12,7 +12,7 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
 }
 
-app.use(morgan('tiny'));
+app.use(morgan('dev'));
 app.use(routes);
 
 app.listen(PORT, () => {
