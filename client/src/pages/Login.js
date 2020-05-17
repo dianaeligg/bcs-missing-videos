@@ -1,52 +1,47 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import API from '../utils/API';
 import { Button, Form, Message } from 'semantic-ui-react'
 import FormFieldInput from '../components/FormFieldInput'
 import { BCS_TOKEN } from '../localKeys';
 
-class Login extends Component {
-
-    state = {
-        badInfo: false
-    }
-
-    handleInputChange = event => {
-        this.setState({
-          badInfo: false,
+function Login (props) {
+    const [state, setState] = useState({badInfo: false});
+    const handleInputChange = event => {
+        setState({
+          ...state,
           [event.target.name]: event.target.value
         });
       };
 
-    handleFormSubmit = event => {
+    const handleFormSubmit = event => {
         event.preventDefault();
-        API.login(this.state.email, this.state.password).then(response => {
+        API.login(state.email, state.password).then(response => {
             if (response.data.success){
                 localStorage.setItem(BCS_TOKEN, response.data.authenticationInfo.authToken);
-                this.props.history.push('/cohortList')
+                props.history.push('/cohortList')
             }else{
-                this.setState({badInfo: true});
+                setState({...state, badInfo: true});
             }
         });
       };
 
 
-    render() {
-        return (
+    return (
         <div>
-              <Form warning={this.state.badInfo}>
+              <Form warning={state.badInfo}>
                 <FormFieldInput text='E-mail'
                                 name='email'
                                 placeholder='me@domain.com'
                                 type='text'
-                                handleChange={this.handleInputChange}
+                                handleChange={handleInputChange}
                                 ></FormFieldInput>
                 <FormFieldInput text='Password'
                                 name='password'
                                 placeholder='Password'
                                 type='password'
-                                handleChange={this.handleInputChange}
+                                handleChange={handleInputChange}
                                 ></FormFieldInput>
-                <Button type='submit' onClick={this.handleFormSubmit}>Sign In</Button>
+                <Button type='submit' onClick={handleFormSubmit}>Sign In</Button>
                 <Message
                 warning
                 header='Hey you, yeah you!'
@@ -57,7 +52,6 @@ class Login extends Component {
             </Form>
         </div>
         );
-    }
 }
 
 export default Login;
