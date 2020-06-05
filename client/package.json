@@ -11,7 +11,8 @@
     "react-router-dom": "^5.0.1",
     "react-scripts": "^2.1.1",
     "semantic-ui-react": "^0.87.3",
-    "eslint-utils": "^1.4.1"
+    "eslint-utils": "^1.4.1",
+    "minimist": ">=1.2.3"
   },
   "scripts": {
     "start": "react-scripts start",
