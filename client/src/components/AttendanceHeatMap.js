@@ -34,6 +34,7 @@ function AttendanceHeatMap(props) {
                     return '<div style="padding: 5px;">' +
                       '<div>' + w.globals.labels[dataPointIndex] + '</div>' +
                       '<div>' + w.config.series[seriesIndex].name + '</div>' +
+                      '<div>' + attendance[seriesIndex].date.toDateString() + '</div>' +
                       '<div>' + status + '</div>' +
                       '</div>'
                   }
