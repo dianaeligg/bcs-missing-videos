@@ -106,8 +106,8 @@ const getAttendanceByEnrollment = async (authToken, enrollmentID) => {
         { courseID: courseID },
         { headers: headers }
       )
-      .then(function (attendanceData) {
-        resolve(attendanceData.data);
+      .then(({ data }) => {
+        resolve(data);
       })
       .catch(function (err) {
         console.log(
@@ -129,11 +129,10 @@ const getCourseIdFromEnrollmentId = async (authToken, enrollmentID) => {
       .get("https://bootcampspot.com/api/instructor/v1/me", {
         headers: headers,
       })
-      .then(function (instructorData) {
+      .then((instructorData) => {
         resolve(
-          instructorData.data.Enrollments.filter(
-            (e) => e.id === enrollmentID
-          )[0].courseId
+          instructorData.data.Enrollments.find((e) => e.id === enrollmentID)
+            .courseId
         );
       })
       .catch(function (err) {
@@ -150,7 +149,8 @@ const formatAttendanceBySession = async (authToken, enrollmentID) => {
   let attendance = await getAttendanceByEnrollment(authToken, enrollmentID);
   let students = attendance.filter(
     (att) => attendance[0].sessionName === att.sessionName
-  ).length;
+  );
+  const numStudents = students.length;
   let sessions = await getSessionsByEnrollment(authToken, enrollmentID);
   let format = [];
   sessions.forEach((session) => {
@@ -160,13 +160,13 @@ const formatAttendanceBySession = async (authToken, enrollmentID) => {
           (att) => att.sessionName === session.sessionName
         );
         let howMany = 1;
-        if (thisAttendance.length > students) {
-          howMany = thisAttendance.length / students;
+        if (thisAttendance.length > numStudents) {
+          howMany = thisAttendance.length / numStudents;
           if (!Number.isInteger(howMany)) throw new Error("Not an integer");
         }
         for (let i = 0; i < howMany; i++) {
           const sAtt = thisAttendance
-            .filter((att, index) => index % howMany === i ) // TODO: puts all records of same student first
+            .filter((att, index) => index % howMany === i) // TODO: puts all records of same student first
             .map((att) => {
               return {
                 studentName: att.studentName,
