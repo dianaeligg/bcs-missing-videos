@@ -2,3 +2,4 @@ node_modules
 testingGrounds
 .dotenv
 build
+.vscode
