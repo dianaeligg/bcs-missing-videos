@@ -9,7 +9,6 @@ class App extends Component {
 
     componentDidMount(){
         API.getLanding().then(r => {
-            console.log(r);
             this.setState({
                 msg: r.data.msg
             });

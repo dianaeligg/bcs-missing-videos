@@ -31,7 +31,6 @@ function AttendanceHeatMap(props) {
                     w.globals.series[seriesIndex][dataPointIndex] === 0 ? 'Absent' :
                     w.globals.series[seriesIndex][dataPointIndex] === 2 ? 'Remote' :
                     w.globals.series[seriesIndex][dataPointIndex] === 3 ? 'Excused' : 'Pending';
-                    console.log(attendance[seriesIndex])
                     return '<div style="padding: 5px;">' +
                       '<div>' + w.globals.labels[dataPointIndex] + '</div>' +
                       '<div>' + w.config.series[seriesIndex].name + '</div>' +
@@ -106,7 +105,6 @@ function AttendanceHeatMap(props) {
                         return -1;
                 }
                 });
-            console.log(att)
             return {name: att.sessionName, data: d};
         })
     };
