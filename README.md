@@ -10,4 +10,5 @@ What started as a way to not individually click each of the 72 sessions ended up
 
 ## Changelog
 
+* 2020/06/09 - Made colors in attendance graph slightly more similar to guideline
 * 2020/06/08 - Fixed issue on Attendance in which only one session was showing out of multiple sessions with the same name
