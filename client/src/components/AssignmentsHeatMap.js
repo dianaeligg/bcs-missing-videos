@@ -7,8 +7,9 @@ let colors = {
   blue: "#0000ff",
   yellow: "#CFA700",
   purple: "#A715A5",
-  orange: "#ffa500",
-  orangeYellow: "#ffa5ff",
+  orange: "#cc8500",
+  orangeYellow: "#ffC555",
+  greenishYellow: "#ADFF2F"
 };
 
 function AssignmentsHeatMap(props) {
@@ -32,31 +33,18 @@ function AssignmentsHeatMap(props) {
       },
       tooltip: {
         custom: ({ series, seriesIndex, dataPointIndex, w }) => {
-          let status =
-            w.globals.series[seriesIndex][dataPointIndex] === 1
-              ? "Present"
-              : w.globals.series[seriesIndex][dataPointIndex] === 0
-              ? "Absent"
-              : w.globals.series[seriesIndex][dataPointIndex] === 2
-              ? "Remote"
-              : w.globals.series[seriesIndex][dataPointIndex] === 3
-              ? "Excused"
-              : "Pending";
           return (
-            '<div style="padding: 5px;">' +
-            "<div>" +
-            w.globals.labels[dataPointIndex] +
-            "</div>" +
-            "<div>" +
-            w.config.series[seriesIndex].name +
-            "</div>" +
-            // "<div>" +
-            // attendance[seriesIndex].date.toDateString() +
-            // "</div>" +
-            // "<div>" +
-            // status +
-            // "</div>" +
-            "</div>"
+            `<div style="padding: 5px;">
+              <div>
+                ${w.globals.labels[dataPointIndex]}
+              </div>
+              <div>
+                ${w.config.series[seriesIndex].name}
+              </div>
+              <div> 
+                ${assignments[seriesIndex].students[dataPointIndex].grade} 
+              </div>
+            </div>`
           );
         },
       },
@@ -85,7 +73,7 @@ function AssignmentsHeatMap(props) {
               {
                 from: 80,
                 to: 89,
-                color: colors.yellow,
+                color: colors.greenishYellow,
                 name: "B",
               },
               {
@@ -106,6 +94,18 @@ function AssignmentsHeatMap(props) {
                 color: colors.red,
                 name: "F",
               },
+              {
+                from: -100,
+                to: -1,
+                color: colors.purple,
+                name: "N/A",
+              },
+              {
+                from: -200,
+                to: -101,
+                color: colors.blue,
+                name: "Unsubmitted",
+              },
             ],
           },
         },
@@ -113,6 +113,7 @@ function AssignmentsHeatMap(props) {
     },
     series: assignments.reverse().map((assignment) => {
       let data = assignment.students.map((student) => {
+        if (!student.submitted) return -101;
         switch (student.grade) {
           case "A+":
             return 100;
@@ -138,11 +139,14 @@ function AssignmentsHeatMap(props) {
             return 66;
           case "D-":
             return 62;
+          case "N/A":
+            return -1;
           default:
             return 59;
         }
       });
-      return { name: assignment.name, data };
+      return { name: assignment.name.length < 25 ? assignment.name : assignment.name.slice(0,24) + "...", 
+               data };
     }),
   };
   return (

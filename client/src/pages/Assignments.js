@@ -7,11 +7,18 @@ const loadingStyle = {
   display: "flex",
 };
 
-const INITIAL_STATE = {
-  assignments: {}
+const titleStyle = {
+  textAlign: "center",
+  fontSize: "3rem"
 };
 
-function Assignments(props:any) {
+
+const INITIAL_STATE = {
+  academic: [],
+  career: []
+};
+
+function Assignments(props) {
   const [assignments, setAssignments] = useState(INITIAL_STATE);
   const [loading, setLoading] = useState(true);
   const courseId = props.match.params.id;
@@ -19,15 +26,19 @@ function Assignments(props:any) {
   useEffect(() => {
     API.getAssignments(courseId)
       .then(({ data }) => {
-        console.log('DATA',data);
-        setAssignments(data);
+        console.log(data);
+        setAssignments({
+          academic: data.filter(
+            (assignment) => assignment.context === "academic"
+          ),
+          career: data.filter((assignment) => assignment.context === "career"),
+        });
       })
       .catch((err) => {
         console.log(err);
       })
       .finally(() => setLoading(false));
   }, []);
-
 
   return (
     <div>
@@ -38,8 +49,14 @@ function Assignments(props:any) {
             src={require("../resources/loading.gif")}
             style={loadingStyle}
           />
-        ) : <AssingmentsHeatMap assignments={assignments}/>
-        }
+        ) : (
+          <>
+          <h1 style={titleStyle}> Academic </h1>
+          <AssingmentsHeatMap assignments={assignments.academic} />
+          <h1 style={titleStyle}> Career </h1>
+          <AssingmentsHeatMap assignments={assignments.career} />
+          </>
+        )}
       </>
     </div>
   );

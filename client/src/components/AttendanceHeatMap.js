@@ -30,15 +30,15 @@ function AttendanceHeatMap(props) {
       tooltip: {
         custom: ({ series, seriesIndex, dataPointIndex, w }) => {
           let status =
-            w.globals.series[seriesIndex][dataPointIndex] === 1
+            w.globals.series[seriesIndex][dataPointIndex] < 101
               ? "Present"
-              : w.globals.series[seriesIndex][dataPointIndex] === 0
+              : w.globals.series[seriesIndex][dataPointIndex] < 201
               ? "Absent"
-              : w.globals.series[seriesIndex][dataPointIndex] === 2
+              : w.globals.series[seriesIndex][dataPointIndex] < 301
               ? "Remote"
-              : w.globals.series[seriesIndex][dataPointIndex] === 3
-              ? "Excused"
-              : "Pending";
+              : w.globals.series[seriesIndex][dataPointIndex] < 401
+              ? "Pending"
+              : "Excused";
           return (
             '<div style="padding: 5px;">' +
             "<div>" +
@@ -70,9 +70,6 @@ function AttendanceHeatMap(props) {
       plotOptions: {
         heatmap: {
           radius: 0,
-          //   enableShades: true,
-          //   shadeIntensity: 0.5,
-          //   reverseNegativeShade: true,
           useFillColorAsStroke: true,
           colorScale: {
             ranges: [
@@ -130,7 +127,8 @@ function AttendanceHeatMap(props) {
             return 400;
         }
       });
-      return { name: att.sessionName, date: att.date, data: d };
+      return { name: att.sessionName.length < 25 ? att.sessionName : att.sessionName.slice(0,24) + "...",
+                date: att.date, data: d };
     }),
   };
   return (

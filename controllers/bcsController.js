@@ -230,9 +230,42 @@ const formatAttendanceBySession = async (
 
 const filterAcademicAssignments = (assignments) => {
   return assignments.filter(
-    (assignment) => assignment.context.contextCode === "academic"
+    (assignment) => new Date(assignment.dueDate) < new Date()
   );
 };
+
+const letterGradeToNumber = (letterGrade) => {
+  switch (letterGrade) {
+    case "A+":
+      return 100;
+    case "A":
+      return 96;
+    case "A-":
+      return 92;
+    case "B+":
+      return 89;
+    case "B":
+      return 86;
+    case "B-":
+      return 82;
+    case "C+":
+      return 79;
+    case "C":
+      return 76;
+    case "C-":
+      return 72;
+    case "D+":
+      return 69;
+    case "D":
+      return 66;
+    case "D-":
+      return 62;
+    case "unsubmitted":
+      return 0;
+    default:
+      return 59;
+  }
+}
 
 const getAssignmentsByEnrollment = (authToken, enrollmentID) => {
   let headers = {
@@ -264,15 +297,23 @@ const getAssignmentsByEnrollment = (authToken, enrollmentID) => {
         });
         Promise.all(promises).then((results) =>
           resolve(
-            results.map(({ data }) => ({
-              name: data.assignment.title,
-              students: data.students.map(({ student, grade }) => {
-                return {
-                  name: `${student.firstName} ${student.lastName}`,
-                  grade: grade ? grade.grade : "unsubmitted",
-                };
-              }),
-            }))
+            results.map(({ data }) => {
+              return {
+                context: data.assignment.context.contextCode,
+                dueDate: data.assignment.dueDate,
+                id: data.assignment.id,
+                name: data.assignment.title,
+                required: data.assignment.required,
+                students: data.students.map(({ grade, student, submission }) => {
+                  return {
+                    name: `${student.firstName} ${student.lastName}`,
+                    grade: grade ? grade.grade : "N/A",
+                    numberGrade: grade ? letterGradeToNumber(grade.grade) : "N/A",
+                    submitted: submission? true: false 
+                  };
+                }),
+              };
+            })
           )
         );
       })
@@ -352,7 +393,6 @@ module.exports = {
       });
   },
   getAssignments: (req, res) => {
-    console.log("PARAMS", req.params.enrollmentID);
     getAssignmentsByEnrollment(
       req.headers.authtoken,
       Number(req.params.enrollmentID)
