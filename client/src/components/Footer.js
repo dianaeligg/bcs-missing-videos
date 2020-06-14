@@ -23,7 +23,7 @@ const Footer = () => {
             <div>
                 <a  style={githubLink} href="https://github.com/dianaeligg/bcs-missing-videos" target="_blank"
                     rel="noopener noreferrer">
-                    <img src="./images/GitHub-Mark-32px.png" alt="Github logo" />
+                    <img src={require("./images/GitHub-Mark-32px.png")} alt="Github logo" />
                     <span>See the code</span>
                 </a> 
             </div>

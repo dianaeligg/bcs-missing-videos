@@ -22,7 +22,7 @@ function CohortGroup( {text, group, color} ) {
     return (
         <div style={groupStyle}>
         <span style={textStyle}>{text}</span>
-        <Card.Group itemsPerRow={3} style={cardGroupStyle}>
+        <Card.Group itemsPerRow={3} style={cardGroupStyle} stackable={true}>
         {
             group.filter(x => x.id !== -1).map(item => 
                 <CohortCard name={item.course.name}
