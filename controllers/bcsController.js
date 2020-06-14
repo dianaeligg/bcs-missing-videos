@@ -174,23 +174,33 @@ const filterOutStudents = (attendance, sessions) => {
       });
   });
   const max = Math.max(...Object.values(students));
-  return Object.entries(students).filter(student => student[1] > max / 2).map(student => student[0]);
+  return Object.entries(students)
+    .filter((student) => student[1] > max / 2)
+    .map((student) => student[0]);
 };
 
-const formatAttendanceBySession = async (authToken, enrollmentID, filterInactive = false) => {
+const formatAttendanceBySession = async (
+  authToken,
+  enrollmentID,
+  filterInactive = false
+) => {
   let attendance = await getAttendanceByEnrollment(authToken, enrollmentID);
   let sessions = (
     await getSessionsByEnrollment(authToken, enrollmentID)
   ).filter((session) => new Date(session.date) < new Date());
-  let students = filterInactive ? filterOutStudents(attendance, sessions) : attendance.filter(
-    (att) => attendance[0].sessionName === att.sessionName
-  ).map(att => att.studentName);
+  let students = filterInactive
+    ? filterOutStudents(attendance, sessions)
+    : attendance
+        .filter((att) => attendance[0].sessionName === att.sessionName)
+        .map((att) => att.studentName);
   const numStudents = students.length;
   let format = [];
   sessions.forEach((session) => {
     if (!format.map((f) => f.sessionName).includes(session.sessionName)) {
       let thisAttendance = attendance.filter(
-        (att) => att.sessionName === session.sessionName && students.includes(att.studentName)
+        (att) =>
+          att.sessionName === session.sessionName &&
+          students.includes(att.studentName)
       );
       let howMany = 1;
       if (thisAttendance.length > numStudents) {
@@ -216,6 +226,63 @@ const formatAttendanceBySession = async (authToken, enrollmentID, filterInactive
     }
   });
   return format;
+};
+
+const filterAcademicAssignments = (assignments) => {
+  return assignments.filter(
+    (assignment) => assignment.context.contextCode === "academic"
+  );
+};
+
+const getAssignmentsByEnrollment = (authToken, enrollmentID) => {
+  let headers = {
+    authToken: authToken,
+    "Content-Type": "application/json",
+  };
+  return new Promise((resolve, reject) => {
+    axios
+      .post(
+        "https://bootcampspot.com/api/instructor/v1/assignments",
+        { enrollmentID: 398506 },
+        {
+          headers: headers,
+        }
+      )
+      .then(({ data }) => {
+        const filteredAssignments = filterAcademicAssignments(
+          data.calendarAssignments
+        );
+        const promises = [];
+        filteredAssignments.forEach((assignment) => {
+          promises.push(
+            axios.post(
+              "https://bootcampspot.com/api/instructor/v1/assignmentDetail",
+              { assignmentId: assignment.id },
+              { headers: headers }
+            )
+          );
+        });
+        Promise.all(promises).then((results) =>
+          resolve(
+            results.map(({ data }) => ({
+              name: data.assignment.title,
+              students: data.students.map(({ student, grade }) => {
+                return {
+                  name: `${student.firstName} ${student.lastName}`,
+                  grade: grade ? grade.grade : "unsubmitted",
+                };
+              }),
+            }))
+          )
+        );
+      })
+      .catch(function (err) {
+        console.log(
+          "something went wrong in axios.post /getCourseIdFromEnrollmentId"
+        );
+        resolve("error");
+      });
+  });
 };
 
 module.exports = {
@@ -275,6 +342,20 @@ module.exports = {
       req.headers.authtoken,
       Number(req.params.enrollmentID),
       true
+    )
+      .then((response) => {
+        if (response) res.json(response);
+        else res.json({ userAccount: { id: -1 } });
+      })
+      .catch((err) => {
+        res.json(err);
+      });
+  },
+  getAssignments: (req, res) => {
+    console.log("PARAMS", req.params.enrollmentID);
+    getAssignmentsByEnrollment(
+      req.headers.authtoken,
+      Number(req.params.enrollmentID)
     )
       .then((response) => {
         if (response) res.json(response);

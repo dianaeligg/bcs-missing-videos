@@ -21,4 +21,7 @@ router.route("/getAttendance/:enrollmentID")
 router.route("/getAttendance/:enrollmentID/filter")
   .get(bcsController.getAttendanceFilter);
 
+router.route("/getAssignments/:enrollmentID/")
+  .get(bcsController.getAssignments);
+
 module.exports = router;
