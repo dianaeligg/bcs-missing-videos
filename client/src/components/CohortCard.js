@@ -18,6 +18,8 @@ function CohortCard(props) {
             <a href={`/cohort/${props.id}`}> Videos </a>
             /
             <a href={`/attendance/${props.id}`}> Attendance </a>
+            /
+            <a href={`/assignments/${props.id}`}> Assignments </a>
           </Card.Description>
           <Card.Description>
           {props.program.programType.name}  
