@@ -26,7 +26,6 @@ function Assignments(props) {
   useEffect(() => {
     API.getAssignments(courseId)
       .then(({ data }) => {
-        console.log(data);
         setAssignments({
           academic: data.filter(
             (assignment) => assignment.context === "academic"

@@ -13,7 +13,6 @@ let colors = {
 };
 
 function AssignmentsHeatMap(props) {
-  console.log("PROPS", props);
   let assignments = props.assignments;
   let height = Math.max(600, assignments.length * 30);
   let state = {

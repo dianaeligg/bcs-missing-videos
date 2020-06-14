@@ -276,7 +276,7 @@ const getAssignmentsByEnrollment = (authToken, enrollmentID) => {
     axios
       .post(
         "https://bootcampspot.com/api/instructor/v1/assignments",
-        { enrollmentID: 398506 },
+        { enrollmentID: enrollmentID },
         {
           headers: headers,
         }
