@@ -29,7 +29,7 @@ class App extends Component {
     return (
       <Router>
         <NavBar logOut={this.logOut}></NavBar>
-      <Container style={{ marginTop: '6em'}}>
+      <Container style={{ marginTop: '2em'}}>
       <div>
           <Route exact path="/" component={Login} />
           <Route exact path="/login" component={Login} />

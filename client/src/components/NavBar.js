@@ -5,9 +5,9 @@ import { Link, Route } from "react-router-dom";
 
 const NavBar = props => {
     return (
-        <Menu fixed='top' inverted>
+        <Menu inverted>
             <Menu.Item color='green'>
-            <Emoji label="sheep" symbol="🐸"/> BCS-MISSING-VIDEOS
+            <Emoji label="sheep" symbol="🐸"/> BCS-HELPER
             </Menu.Item>
 
             <Route
