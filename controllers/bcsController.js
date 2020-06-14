@@ -107,7 +107,22 @@ const getAttendanceByEnrollment = async (authToken, enrollmentID) => {
         { headers: headers }
       )
       .then(({ data }) => {
-        resolve(data);
+        resolve(
+          data.map((session) => {
+            return {
+              ...session,
+              attendance: session.pending
+                ? "pending"
+                : session.excused
+                ? "excused"
+                : session.remote
+                ? "remote"
+                : session.present
+                ? "present"
+                : "absent",
+            };
+          })
+        );
       })
       .catch(function (err) {
         console.log(
@@ -145,49 +160,58 @@ const getCourseIdFromEnrollmentId = async (authToken, enrollmentID) => {
   return await promise;
 };
 
-const formatAttendanceBySession = async (authToken, enrollmentID) => {
+const filterOutStudents = (attendance, sessions) => {
+  let students = {};
+  sessions.forEach((session) => {
+    attendance
+      .filter((att) => att.sessionName === session.sessionName)
+      .forEach((att) => {
+        if (students[att.studentName] === undefined) {
+          students[att.studentName] = 0;
+        } else if (att.attendance !== "pending") {
+          students[att.studentName] = students[att.studentName] + 1;
+        }
+      });
+  });
+  const max = Math.max(...Object.values(students));
+  return Object.entries(students).filter(student => student[1] > max / 2).map(student => student[0]);
+};
+
+const formatAttendanceBySession = async (authToken, enrollmentID, filterInactive = false) => {
   let attendance = await getAttendanceByEnrollment(authToken, enrollmentID);
-  let students = attendance.filter(
+  let sessions = (
+    await getSessionsByEnrollment(authToken, enrollmentID)
+  ).filter((session) => new Date(session.date) < new Date());
+  let students = filterInactive ? filterOutStudents(attendance, sessions) : attendance.filter(
     (att) => attendance[0].sessionName === att.sessionName
-  );
+  ).map(att => att.studentName);
   const numStudents = students.length;
-  let sessions = await getSessionsByEnrollment(authToken, enrollmentID);
   let format = [];
   sessions.forEach((session) => {
-    if (new Date(session.date) < new Date()) {
-      if (!format.map((f) => f.sessionName).includes(session.sessionName)) {
-        let thisAttendance = attendance.filter(
-          (att) => att.sessionName === session.sessionName
-        );
-        let howMany = 1;
-        if (thisAttendance.length > numStudents) {
-          howMany = thisAttendance.length / numStudents;
-          if (!Number.isInteger(howMany)) throw new Error("Not an integer");
-        }
-        for (let i = 0; i < howMany; i++) {
-          const sAtt = thisAttendance
-            .filter((att, index) => index % howMany === i) // TODO: puts all records of same student first
-            .map((att) => {
-              return {
-                studentName: att.studentName,
-                attendance: att.pending
-                  ? "pending"
-                  : att.excused
-                  ? "excused"
-                  : att.remote
-                  ? "remote"
-                  : att.present
-                  ? "present"
-                  : "absent",
-              };
-            });
-          format.push({
-            sessionId: session.sessionId,
-            sessionName: session.sessionName,
-            date: session.date,
-            students: sAtt,
+    if (!format.map((f) => f.sessionName).includes(session.sessionName)) {
+      let thisAttendance = attendance.filter(
+        (att) => att.sessionName === session.sessionName && students.includes(att.studentName)
+      );
+      let howMany = 1;
+      if (thisAttendance.length > numStudents) {
+        howMany = thisAttendance.length / numStudents;
+        if (!Number.isInteger(howMany)) throw new Error("Not an integer");
+      }
+      for (let i = 0; i < howMany; i++) {
+        const sAtt = thisAttendance
+          .filter((att, index) => index % howMany === i) // TODO: puts all records of same student first
+          .map((att) => {
+            return {
+              studentName: att.studentName,
+              attendance: att.attendance,
+            };
           });
-        }
+        format.push({
+          sessionId: session.sessionId,
+          sessionName: session.sessionName,
+          date: session.date,
+          students: sAtt,
+        });
       }
     }
   });
@@ -235,7 +259,22 @@ module.exports = {
   getAttendance: (req, res) => {
     formatAttendanceBySession(
       req.headers.authtoken,
-      Number(req.params.enrollmentID)
+      Number(req.params.enrollmentID),
+      false
+    )
+      .then((response) => {
+        if (response) res.json(response);
+        else res.json({ userAccount: { id: -1 } });
+      })
+      .catch((err) => {
+        res.json(err);
+      });
+  },
+  getAttendanceFilter: (req, res) => {
+    formatAttendanceBySession(
+      req.headers.authtoken,
+      Number(req.params.enrollmentID),
+      true
     )
       .then((response) => {
         if (response) res.json(response);

@@ -20,6 +20,9 @@ function AttendanceHeatMap(props) {
         dropShadow: {
           enabled: false,
         },
+        animations: {
+          enabled: false
+        }
       },
       dataLabels: {
         enabled: false,

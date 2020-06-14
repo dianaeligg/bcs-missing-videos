@@ -18,4 +18,7 @@ router.route("/getEnrollments/")
 router.route("/getAttendance/:enrollmentID")
   .get(bcsController.getAttendance);
 
+router.route("/getAttendance/:enrollmentID/filter")
+  .get(bcsController.getAttendanceFilter);
+
 module.exports = router;
