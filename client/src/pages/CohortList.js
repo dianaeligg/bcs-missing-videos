@@ -9,41 +9,33 @@ const loadingStyle = {
 };
 
 function CohortList() {
-  const [state, setState] = useState({
-    loading: true,
-    userInfo: { firstName: "" },
-    enrollments: [],
-    loggedIn: true,
-  });
-
-  const [dadJoke, setDadJoke] = useState();
+  const [loading, setLoading] = useState(true);
+  const [enrollments, setEnrollments] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [userInfo, setUserInfo] = useState({});
 
   useEffect(() => {
     API.getEnrollments()
-      .then((r) => {
-        if (r.data.userInfo.id !== -1)
-          setState({
-            userInfo: r.data.userInfo,
-            enrollments: r.data.Enrollments,
-            loading: false,
-            loggedIn: true,
-          });
-        else {
-          setState({ loggedIn: false, loading: false });
+      .then(({data}) => {
+        if (data.userInfo.id !== -1) {
+          setUserInfo(data.userInfo);
+          setEnrollments(data.Enrollments);
+          setLoading(false);
+          setLoggedIn(true);
+        } else {
+          setLoggedIn(false); 
+          setLoading(false);
         }
       })
       .catch((err) => {
-        console.log("error");
+        setLoading(false);
       });
-    API.getDadJoke().then(({ data }) => {
-      setDadJoke(data.joke);
-    });
   }, []);
 
   return (
     <div>
-      {!state.loggedIn ? <NotLoggedIn></NotLoggedIn> : ""}
-      {state.loading ? (
+      {!loggedIn ? <NotLoggedIn></NotLoggedIn> : ""}
+      {loading ? (
         <img
           alt="loading"
           src={require("../resources/loading.gif")}
@@ -51,14 +43,11 @@ function CohortList() {
         />
       ) : (
         <>
-          <div>
-            {state.userInfo.firstName ? "Hi " + state.userInfo.firstName : ""}
-          </div>
-          <div>{dadJoke}</div>
+          <div>{`Hi ${userInfo.firstName || "there"}`}</div>
           <CohortGroup
             text="Current Enrollments"
             color="purple"
-            group={state.enrollments.filter(
+            group={enrollments.filter(
               (x) =>
                 new Date(x.course.startDate) < new Date() &&
                 new Date(x.course.endDate) > new Date()
@@ -67,14 +56,14 @@ function CohortList() {
           <CohortGroup
             text="Past Enrollments"
             color="blue"
-            group={state.enrollments.filter(
+            group={enrollments.filter(
               (x) => new Date(x.course.endDate) < new Date()
             )}
           />
           <CohortGroup
             text="Future Enrollments"
             color="teal"
-            group={state.enrollments.filter(
+            group={enrollments.filter(
               (x) => new Date(x.course.startDate) > new Date()
             )}
           />
