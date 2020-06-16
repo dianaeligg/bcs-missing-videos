@@ -86,7 +86,7 @@ const getEnrollmentsInternal = async (authToken) => {
         resolve(enrollmentData);
       })
       .catch((err) => {
-        console.log("something went wrong in axios.get /me ");
+        console.log("something went wrong in axios.get /me ", err);
         resolve("error");
       });
   });
