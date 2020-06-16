@@ -11,6 +11,7 @@ const loadingStyle = {
 function CohortList() {
   const [loading, setLoading] = useState(true);
   const [enrollments, setEnrollments] = useState([]);
+  const [error, setError] = useState(false);
   const [loggedIn, setLoggedIn] = useState(true);
   const [userInfo, setUserInfo] = useState({});
 
@@ -29,11 +30,14 @@ function CohortList() {
       })
       .catch((err) => {
         setLoading(false);
+        setError(true);
       });
   }, []);
 
   return (
     <div>
+      <div>{`Hi ${userInfo.firstName || "there"}`}</div>
+      {error ? <div>There was an issue when fetching enrollment data.  Please logout and login again.</div> : ""}
       {!loggedIn ? <NotLoggedIn></NotLoggedIn> : ""}
       {loading ? (
         <img
@@ -43,7 +47,6 @@ function CohortList() {
         />
       ) : (
         <>
-          <div>{`Hi ${userInfo.firstName || "there"}`}</div>
           <CohortGroup
             text="Current Enrollments"
             color="purple"
